@@ -522,3 +522,17 @@ h3 { font-size: 1.25rem; letter-spacing: -.015em; line-height: 1.2; }
 .cta .ventana .parrafo { margin: 1rem auto 1.8rem; }
 .ventana .boton { border-radius: 999px; }
 @media (max-width: 899px) { .ventana__ruta { display: none; } .ventana__pestana { font-size: .7rem; } }
+
+/* Tarjeta «Hablemos de tu negocio» como ventana de macOS, igual que el editor (Pau, 26/11): más pequeña y sin chocar con la barra */
+.hero__contacto { padding-top: 112px; }
+.contacto { width: min(410px, 100%); border-radius: 16px; padding: 0 26px 24px; overflow: hidden; }
+.contacto__barra { display: flex; align-items: center; gap: 14px; height: 40px; margin: 0 -26px 20px; padding: 0 14px; background: #f2f2f4; border-bottom: 1px solid rgba(0, 0, 0, .07); }
+.contacto__pestana { font-family: "JetBrains Mono", Menlo, Consolas, monospace; font-size: .74rem; color: #6b6b70; }
+.contacto h2 { font-size: clamp(1.5rem, 1.9vw, 1.9rem); margin-bottom: .45rem; }
+.contacto__intro { font-size: .9rem; margin-bottom: 1rem; }
+.contacto .formulario { gap: 9px; }
+.contacto .campo input, .contacto .campo select, .contacto .campo textarea { padding: 9px 12px; font-size: .92rem; border-radius: 10px; }
+.contacto .campo textarea { min-height: 62px; }
+.contacto .campo label { font-size: .66rem; }
+@media (max-height: 760px) and (min-width: 900px) { .contacto__intro { display: none; } .contacto .campo textarea { min-height: 48px; } }
+@media (max-width: 899px) { .contacto { padding: 0 20px 22px; } .contacto__barra { margin: 0 -20px 18px; } }
