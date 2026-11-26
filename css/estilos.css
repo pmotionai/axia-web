@@ -218,8 +218,8 @@ h3 { font-size: 1.25rem; letter-spacing: -.015em; line-height: 1.2; }
 .sec--arq { padding: 0; overflow: clip; }
 .arq-pin { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 110px 0 60px; }
 .dos-col { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
-.sec--arq .dos-col { grid-template-columns: minmax(0, .62fr) minmax(0, 1.38fr); gap: clamp(24px, 2.6vw, 40px); }
-.sec--arq .mac { width: 108%; }
+.sec--arq .dos-col { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(24px, 2.6vw, 40px); }
+.sec--arq .mac { width: min(100%, calc((100svh - 240px) * 1.26)); margin-left: auto; }   /* la tableta cabe entera en la vista (Pau, 25/11) */
 .sec--arq h2 { font-size: clamp(2rem, 3.1vw, 3.1rem); }
 .bloque-texto h2 { margin-bottom: 1.4rem; }
 .bloque-texto .parrafo { margin-bottom: 2rem; }
@@ -231,12 +231,20 @@ h3 { font-size: 1.25rem; letter-spacing: -.015em; line-height: 1.2; }
 .pasos li.on { background: rgba(255, 255, 255, .06); color: #c7c7cc; }
 .pasos li.on::before { color: #f5f5f7; }
 .pasos li.on b { color: #fff; }
+/* La sección queda fija al hacer scroll: el texto tiene que caber entero en la altura de la ventana (Pau, 25/11) */
+@media (min-width: 900px) {
+  .sec--arq h2 { font-size: clamp(1.9rem, min(3.1vw, 5.6vh), 3.1rem); }
+  .sec--arq .parrafo { font-size: clamp(.95rem, min(1.2vw, 2.3vh), 1.25rem); margin-bottom: min(2rem, 3vh); }
+  .bloque-texto h2 { margin-bottom: min(1.4rem, 2.2vh); }
+  .sec--arq .pasos { margin-bottom: min(2.2rem, 3vh); gap: 4px; }
+  .sec--arq .pasos li { padding-top: min(12px, 1.1vh); padding-bottom: min(12px, 1.1vh); }
+}
 
 .mac-escena { perspective: 1800px; }
 .mac { position: relative; width: 100%; transform-style: preserve-3d; will-change: transform; }
 .mac__img { width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
 /* La pantalla es HTML de 1600×1000 deformado en perspectiva sobre la pantalla del render (main.js calcula la matriz) */
-.mac__pantalla { position: absolute; left: 0; top: 0; width: 1600px; height: 1000px; transform-origin: 0 0; overflow: hidden; background: #0b0b0c; color: #f5f5f7; font-family: var(--fuente); backface-visibility: hidden; }
+.mac__pantalla { position: absolute; left: 0; top: 0; width: 1600px; height: 1120px; border-radius: 45px; transform-origin: 0 0; overflow: hidden; background: #0b0b0c; color: #f5f5f7; font-family: var(--fuente); backface-visibility: hidden; }
 .ap__final { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 .zoom-arq .mac-escena { will-change: transform; }
 .zoom-arq .sec--proceso { padding-top: 12vh; }
@@ -250,25 +258,25 @@ h3 { font-size: 1.25rem; letter-spacing: -.015em; line-height: 1.2; }
 .ap__marca em { font-style: normal; font-weight: 400; color: #8d8d93; }
 .ap__vivo { display: flex; align-items: center; gap: 14px; font-size: 30px; color: #d1d1d6; padding: 12px 26px; border-radius: 999px; background: #161618; border: 2px solid #26262a; }
 .ap__vivo i { width: 16px; height: 16px; border-radius: 50%; background: #f5f5f7; box-shadow: 0 0 16px #fff; }
-.ap__cols { position: absolute; left: 64px; right: 64px; top: 150px; display: grid; grid-template-columns: 300px 470px 300px 286px; justify-content: space-between; align-items: start; }
+.ap__cols { position: absolute; left: 64px; right: 64px; top: 210px; display: grid; grid-template-columns: 304px 520px 300px 262px; justify-content: space-between; align-items: start; }
 .ap__col { display: flex; flex-direction: column; gap: 18px; }
 .ap__etq { font-size: 28px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: #8d8d93; }
 .ap__card { background: #141416; border: 3px solid #232326; border-radius: 32px; padding: 30px; opacity: .3; }
-.ap__card h4 { font-size: 46px; line-height: 1.08; letter-spacing: -.02em; }
+.ap__card h4 { font-size: 42px; line-height: 1.08; letter-spacing: -.02em; }
 .ap__canales { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
-.ap__canales span { font-size: 28px; padding: 12px 0; text-align: center; border-radius: 999px; background: #1f1f22; border: 2px solid #2c2c30; color: #e5e5ea; }
+.ap__canales span { font-size: 25px; padding: 12px 0; text-align: center; border-radius: 999px; background: #1f1f22; border: 2px solid #2c2c30; color: #e5e5ea; }
 .ap__axia { display: flex; flex-direction: column; gap: 16px; padding: 22px; opacity: 1; }
 .ap__mod { display: grid; grid-template-columns: 76px 1fr; gap: 20px; align-items: center; padding: 20px 22px; border-radius: 24px; background: #111113; border: 3px solid #232326; opacity: .3; }
 .ap__ico { width: 76px; height: 76px; border-radius: 20px; background: linear-gradient(180deg, #fbfbfd, #c7c7cc); color: #0b0b0c; display: grid; place-items: center; }
 .ap__ico svg { width: 38px; height: 38px; }
-.ap__mod b { display: block; font-size: 38px; letter-spacing: -.015em; line-height: 1.1; }
+.ap__mod b { display: block; font-size: 34px; letter-spacing: -.015em; line-height: 1.1; }
 .ap__chip { display: inline-block; margin-top: 10px; font-size: 26px; font-weight: 700; padding: 6px 16px; border-radius: 999px; background: linear-gradient(180deg, #fbfbfd, #c7c7cc); color: #0b0b0c; }
-.ap__aviso { margin-top: 22px; padding: 20px 22px; border-radius: 22px; background: #1f1f22; border: 2px solid #2c2c30; font-size: 30px; line-height: 1.3; color: #f5f5f7; }
+.ap__aviso { margin-top: 22px; padding: 20px 22px; border-radius: 22px; background: #1f1f22; border: 2px solid #2c2c30; font-size: 28px; line-height: 1.3; color: #f5f5f7; }
 .ap__aviso small { display: block; font-size: 24px; letter-spacing: .1em; text-transform: uppercase; color: #8d8d93; margin-bottom: 6px; }
 .ap__lista { list-style: none; display: grid; gap: 16px; margin-top: 24px; }
 .ap__lista li { display: flex; align-items: center; gap: 16px; font-size: 34px; color: #f5f5f7; }
 .ap__lista li i { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg, #fbfbfd, #c7c7cc); color: #0b0b0c; font-style: normal; font-size: 26px; font-weight: 700; }
-.ap__lineas { position: absolute; inset: 0; width: 1600px; height: 1000px; pointer-events: none; }
+.ap__lineas { position: absolute; inset: 0; width: 1600px; height: 1120px; pointer-events: none; }
 .ap__lineas path { fill: none; stroke-width: 5; stroke-linecap: round; }
 .ap__lineas .base { stroke: #2a2a2e; }
 .ap__lineas .activa { stroke: #e5e5ea; }
@@ -500,3 +508,17 @@ h3 { font-size: 1.25rem; letter-spacing: -.015em; line-height: 1.2; }
 @media (prefers-reduced-transparency: reduce) {
   .nav__pildora::before { backdrop-filter: none; -webkit-backdrop-filter: none; background: #141416; }
 }
+
+/* «¿Hablamos?» como una ventana de macOS (Pau, 26/11): botones rojo, amarillo y verde y bordes redondeados */
+.ventana { position: relative; max-width: 900px; margin: 0 auto; border-radius: 26px; overflow: hidden; text-align: center;
+  background: linear-gradient(180deg, rgba(38, 38, 42, .82), rgba(18, 18, 20, .9)); border: 1px solid rgba(255, 255, 255, .14);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .12); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+.ventana__barra { position: relative; display: flex; align-items: center; gap: 9px; height: 48px; padding: 0 18px; background: rgba(255, 255, 255, .05); border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.ventana__barra i { width: 13px; height: 13px; border-radius: 50%; box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .25); }
+.ventana__barra .rojo { background: #ff5f57; }
+.ventana__barra .amarillo { background: #febc2e; }
+.ventana__barra .verde { background: #28c840; }
+.ventana__barra span { position: absolute; left: 50%; transform: translateX(-50%); font-size: .82rem; font-weight: 500; color: #a1a1a6; white-space: nowrap; }
+.ventana__cuerpo { padding: clamp(40px, 6vw, 80px) clamp(22px, 5vw, 64px) clamp(44px, 6vw, 84px); }
+.ventana .boton { border-radius: 999px; }
+@media (max-width: 899px) { .ventana { border-radius: 20px; } .ventana__barra span { display: none; } .cta h2 { font-size: clamp(2.6rem, 14vw, 4rem); } }

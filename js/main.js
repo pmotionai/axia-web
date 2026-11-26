@@ -237,7 +237,7 @@
   }
   function colocarPantalla() {
     const s = macImg.clientWidth / MAC.ancho;
-    if (s) pantallaArq.style.transform = matrizCuadrilatero(1600, 1000, esquinasActuales.map(([x, y]) => [x * s, y * s]));
+    if (s) pantallaArq.style.transform = matrizCuadrilatero(GIRO.pantalla.ancho, GIRO.pantalla.alto, esquinasActuales.map(([x, y]) => [x * s, y * s]));
   }
   // Imágenes del giro: se precargan al abrir la página y se cambian según el scroll (la pantalla HTML las sigue).
   // Si al hacer scroll rápido una imagen aún no ha llegado, se pone la más cercana y se corrige en cuanto llega.
