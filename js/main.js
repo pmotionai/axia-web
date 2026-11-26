@@ -217,7 +217,7 @@
   const GIRO = window.AXIA_MAC_GIRO;
   const MAC = { ancho: GIRO.ancho, alto: GIRO.alto, esquinas: GIRO.esquinas[0] };
   const ULTIMO_GIRO = GIRO.esquinas.length - 1;
-  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp`);
+  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611260818`);
   let esquinasActuales = MAC.esquinas;
   const seccionArq = $('#arquitectura');
   const mac = $('#mac');
