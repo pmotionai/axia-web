@@ -158,20 +158,27 @@ h3 { font-size: 1.25rem; letter-spacing: -.015em; line-height: 1.2; }
 .mega__der .todos { margin-top: auto; color: #555; }
 .trazo { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ---------- 3. Hero (portátil) + contacto ---------- */
+/* ---------- 3. Hero (la gema 3D) + contacto ---------- */
 .hero { position: relative; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
-/* Degradado de color con grano (estilo malla difuminada, más suave que el de referencia) */
+/* Fondo «escaparate» (28/11, sustituye a las manchas rojas y naranjas): negro, un foco de luz plateada que cae
+   sobre la gema, dos haces en diagonal (idea de Resend), el reflejo en el suelo y una rejilla de puntos que se
+   abre con la explosión (Vercel/Linear). Solo blanco, negro y plata. */
 .hero__brillo { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.hero__brillo i { position: absolute; border-radius: 50%; filter: blur(56px); will-change: transform; }
-.hero__brillo i:nth-child(1) { width: 64vmax; height: 64vmax; left: -18vw; top: 26vh; background: radial-gradient(circle, rgba(146, 16, 22, .95) 0%, rgba(146, 16, 22, 0) 68%); }
-.hero__brillo i:nth-child(2) { width: 54vmax; height: 54vmax; right: -14vw; top: -16vh; background: radial-gradient(circle, rgba(212, 64, 26, .85) 0%, rgba(212, 64, 26, 0) 68%); }
-.hero__brillo i:nth-child(3) { width: 36vmax; height: 36vmax; left: 16vw; top: -12vh; background: radial-gradient(circle, rgba(186, 172, 36, .8) 0%, rgba(186, 172, 36, 0) 68%); }
-.hero__brillo i:nth-child(4) { width: 48vmax; height: 48vmax; right: 2vw; bottom: -22vh; background: radial-gradient(circle, rgba(110, 10, 14, .9) 0%, rgba(110, 10, 14, 0) 68%); }
-.hero__brillo i:nth-child(5) { width: 30vmax; height: 30vmax; left: 52vw; top: 34vh; background: radial-gradient(circle, rgba(214, 128, 34, .62) 0%, rgba(214, 128, 34, 0) 68%); }
-.hero__brillo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 55% at 50% 62%, rgba(5, 5, 5, .42), rgba(5, 5, 5, 0) 70%); }
-.hero__grano { position: absolute; inset: 0; z-index: 1; opacity: .28; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.hero__brillo i { position: absolute; will-change: transform; pointer-events: none; }
+.hero__brillo i:nth-child(1) { left: 50%; top: -34vh; width: 120vmax; height: 150vh; margin-left: -60vmax; background: radial-gradient(ellipse 30% 58% at 50% 0%, rgba(230, 234, 242, .22), rgba(230, 234, 242, .07) 46%, rgba(230, 234, 242, 0) 74%); filter: blur(18px); transform-origin: 50% 0; }
+.hero__brillo i:nth-child(2) { right: -10vw; top: -45vh; width: 30vw; height: 190vh; transform: rotate(34deg); background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .05) 38%, rgba(255, 255, 255, .085) 50%, rgba(255, 255, 255, .05) 62%, rgba(255, 255, 255, 0)); filter: blur(26px); }
+.hero__brillo i:nth-child(3) { left: -6vw; top: -45vh; width: 14vw; height: 190vh; transform: rotate(-30deg); background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .045) 50%, rgba(255, 255, 255, 0)); filter: blur(22px); }
+.hero__brillo i:nth-child(4) { left: 50%; bottom: -10vh; width: 76vw; height: 36vh; margin-left: -38vw; background: radial-gradient(ellipse 46% 38% at 50% 50%, rgba(222, 226, 236, .11), rgba(222, 226, 236, 0) 72%); filter: blur(8px); }
+.hero__brillo i:nth-child(5) { inset: -12%; opacity: .5; background-image: radial-gradient(rgba(255, 255, 255, .2) 1px, transparent 1.3px); background-size: 30px 30px; background-position: center; -webkit-mask-image: radial-gradient(ellipse 52% 50% at 50% 56%, #000 8%, rgba(0, 0, 0, .35) 45%, transparent 78%); mask-image: radial-gradient(ellipse 52% 50% at 50% 56%, #000 8%, rgba(0, 0, 0, .35) 45%, transparent 78%); }
+.hero__brillo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 85% 75% at 50% 52%, rgba(5, 5, 5, 0) 55%, rgba(5, 5, 5, .7) 100%); }
+.hero__grano { position: absolute; inset: 0; z-index: 1; opacity: .2; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .hero__lienzo { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 64%; }
-.hero__lienzo canvas { width: 100%; height: 100%; }
+.hero__lienzo canvas { width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.4s ease .15s; }
+.gema-lista .hero__lienzo canvas { opacity: 1; }
+/* Si el navegador no puede con el 3D, la gema dibujada en su sitio */
+.hero__respaldo { display: none; position: absolute; left: 50%; top: 62%; height: 40vh; width: auto; transform: translate(-50%, -50%); color: #e8e8ec; filter: drop-shadow(0 0 40px rgba(255, 255, 255, .18)); }
+.sin-js .hero__respaldo, .sin-webgl .hero__respaldo { display: block; }
+.sin-webgl .hero__lienzo canvas { display: none; }
 .hero__arriba { position: absolute; left: 0; right: 0; top: clamp(104px, 14vh, 150px); text-align: center; padding: 0 24px; z-index: 2; }
 .hero__titular { font-size: clamp(2.2rem, 4.8vw, 4.8rem); max-width: 14em; margin: 0 auto; text-wrap: balance; text-shadow: 0 2px 40px rgba(0, 0, 0, .55); }
 .hero__titular .plata { display: inline-block; text-shadow: none; filter: drop-shadow(0 2px 30px rgba(0, 0, 0, .5)); }

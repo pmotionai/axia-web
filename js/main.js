@@ -2,7 +2,7 @@
    Axia · Landing — interacciones
    1) Arranque: Lenis (scroll suave) + GSAP/ScrollTrigger
    2) Fondo que cambia de color por secciones + barra que aparece y cambia de tono
-   3) Hero: secuencia del portátil en <canvas> + tarjeta de contacto
+   3) Hero: la gema 3D (js/gema.js) que estalla con el scroll + tarjeta de contacto
    4) iPhone: el chat de WhatsApp avanza con el scroll
    5) Editor: el código se escribe solo, con resaltado de sintaxis
    6) Textos que entran, botones magnéticos, tarjetas que se inclinan, menú
@@ -91,65 +91,16 @@
   else window.addEventListener('scroll', alMover, { passive: true });
   ScrollTrigger.addEventListener('refresh', () => { calcularParadas(); alMover(); });
 
-  /* ---------- 3. Hero: el portátil se abre, gira y deja sitio al contacto ---------- */
+  /* ---------- 3. Hero: la gema se agrieta, estalla y se vuelve a montar junto al contacto ---------- */
+  // La gema 3D la dibuja js/gema.js (three.js) en #lienzo. Aquí solo se le pasa el avance del scroll: GEMA.s de 0 a 1.
   const hero = $('#inicio');
-  const lienzo = $('#lienzo');
-  const ctx = lienzo.getContext('2d');
   const cajaLienzo = $('.hero__lienzo');
   const tarjeta = $('#contacto');
   const huecoHero = $('.hero__contacto');
   const huecoMovil = $('#contacto-movil .contenedor');
-  const enMovil = matchMedia('(max-width: 899px)').matches;          // juego de imágenes según el tamaño al cargar
-  const CARPETA = enMovil ? 'frames-movil' : 'frames';
-  const TOTAL = enMovil ? 75 : 150;
-  const imagenes = new Array(TOTAL);
-  const secuencia = { frame: 0 };
-  let pintada = null;
-
-  // Precarga: primero una de cada 8, luego cada 4, 2 y 1 → se puede hacer scroll enseguida.
-  function cargar(i) {
-    if (imagenes[i]) return;
-    const im = new Image();
-    im.decoding = 'async';
-    im.onload = () => { im.lista = true; if (Math.abs(Math.round(secuencia.frame) - i) < 4) pintar(true); };
-    im.src = `${CARPETA}/f${String(i).padStart(3, '0')}.webp`;
-    imagenes[i] = im;
-  }
-  cargar(0); cargar(TOTAL - 1);
-  [8, 4, 2, 1].forEach((paso) => { for (let i = 0; i < TOTAL; i += paso) cargar(i); });
-
-  function cercana(i) {
-    if (imagenes[i] && imagenes[i].lista) return imagenes[i];
-    for (let k = 1; k < TOTAL; k++) {
-      const a = imagenes[i - k], b = imagenes[i + k];
-      if (a && a.lista) return a;
-      if (b && b.lista) return b;
-    }
-    return null;
-  }
-  function pintar(forzar = false) {
-    const i = Math.max(0, Math.min(TOTAL - 1, Math.round(secuencia.frame)));
-    const im = cercana(i);
-    if (!im || (im === pintada && !forzar)) return;
-    pintada = im;
-    const W = lienzo.width, H = lienzo.height, r = im.naturalWidth / im.naturalHeight;
-    let h = H * 0.66, w = h * r;
-    const maxW = W * (W < H ? 1.06 : 0.94);
-    if (w > maxW) { w = maxW; h = w / r; }
-    ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(im, (W - w) / 2, H * 0.64 - h / 2, w, h);   // por debajo del centro: arriba va el titular
-  }
-  function ajustarLienzo() {
-    const d = Math.min(window.devicePixelRatio || 1, 2);
-    const w = Math.round(lienzo.clientWidth * d), h = Math.round(lienzo.clientHeight * d);
-    if (!w || !h || (w === lienzo.width && h === lienzo.height)) return;
-    lienzo.width = w; lienzo.height = h;
-    pintar(true);
-  }
-  // El lienzo se ajusta a su tamaño real (también si cambia sin evento resize)
-  if ('ResizeObserver' in window) new ResizeObserver(ajustarLienzo).observe(lienzo);
-  window.addEventListener('resize', ajustarLienzo);
-  ajustarLienzo();
+  const GEMA = window.AXIA_GEMA || (window.AXIA_GEMA = { s: 0 });
+  // Si three.js no llega a cargar, se ve la gema dibujada (SVG) en su lugar
+  setTimeout(() => { if (!raiz.classList.contains('gema-lista')) raiz.classList.add('sin-webgl'); }, 8000);
 
   // El titular entra con fade al cargar
   gsap.from('.hero__arriba', { autoAlpha: 0, y: 34, duration: 1.4, delay: 0.15, ease: 'power3.out' });
@@ -161,7 +112,7 @@
     (escritorio && !quieto ? huecoHero : huecoMovil).appendChild(tarjeta);
 
     if (quieto) {
-      secuencia.frame = TOTAL - 1; pintar(true);
+      GEMA.s = 0;
       const fin = () => hero.offsetTop + hero.offsetHeight;
       tramoHero = { blancoIni: fin() - innerHeight * 0.4, blancoFin: fin(), contacto: fin() };
       return;
@@ -185,20 +136,20 @@
       },
     });
 
-    // 0 → 70 %: el portátil se abre de espaldas, gira 180° y queda de frente
-    tl.to(secuencia, { frame: TOTAL - 1, duration: 0.70, onUpdate: () => pintar() }, 0)
+    // Todo el hero (0 → 100 %) mueve la gema: se agrieta, estalla hacia el 20 % y se vuelve a montar al final (fases en gema.js)
+    tl.to(GEMA, { s: 1, duration: 1 }, 0)
       .to('.hero__intro', { autoAlpha: 0, duration: 0.05 }, 0.01)
       .to('.hero__titular', { autoAlpha: 0, y: -50, duration: 0.07 }, 0.62)
       .to('.hero__brillo', { autoAlpha: 0, duration: 0.08 }, 0.68)
-      // las manchas de color se desplazan con el scroll mientras el portátil gira
-      .to('.hero__brillo i:nth-child(1)', { xPercent: 22, yPercent: -18, duration: 0.7 }, 0)
-      .to('.hero__brillo i:nth-child(2)', { xPercent: -18, yPercent: 20, duration: 0.7 }, 0)
-      .to('.hero__brillo i:nth-child(3)', { xPercent: 30, yPercent: 26, duration: 0.7 }, 0)
-      .to('.hero__brillo i:nth-child(4)', { xPercent: -24, yPercent: -16, duration: 0.7 }, 0)
-      .to('.hero__brillo i:nth-child(5)', { xPercent: -30, yPercent: 10, duration: 0.7 }, 0);
+      // la luz del escaparate se mueve con el scroll y la rejilla se abre con la explosión
+      .to('.hero__brillo i:nth-child(1)', { yPercent: -8, scale: 1.12, duration: 0.7 }, 0)
+      .to('.hero__brillo i:nth-child(2)', { xPercent: -60, duration: 0.7 }, 0)
+      .to('.hero__brillo i:nth-child(3)', { xPercent: 90, duration: 0.7 }, 0)
+      .to('.hero__brillo i:nth-child(4)', { autoAlpha: 0.35, duration: 0.4 }, 0.2)
+      .fromTo('.hero__brillo i:nth-child(5)', { scale: 1 }, { scale: 1.35, autoAlpha: 0.25, duration: 0.45, ease: 'power2.out' }, 0.18);
 
     if (escritorio) {
-      // 72 → 100 %: el fondo pasa a blanco, el portátil se va a la izquierda y entra la tarjeta
+      // 72 → 100 %: el fondo pasa a blanco, la gema se monta otra vez a la izquierda y entra la tarjeta
       tl.to(cajaLienzo, { x: () => -innerWidth * 0.22, scale: 0.8, duration: 0.12, ease: 'power2.inOut' }, 0.72)
         .fromTo(tarjeta, { autoAlpha: 0, x: 90 }, { autoAlpha: 1, x: 0, duration: 0.1, ease: 'power3.out' }, 0.80)
         .from($$('.anima', tarjeta), { autoAlpha: 0, y: 24, duration: 0.06, stagger: 0.008, ease: 'power2.out' }, 0.83)
@@ -217,7 +168,7 @@
   const GIRO = window.AXIA_MAC_GIRO;
   const MAC = { ancho: GIRO.ancho, alto: GIRO.alto, esquinas: GIRO.esquinas[0] };
   const ULTIMO_GIRO = GIRO.esquinas.length - 1;
-  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611280055`);
+  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611280120`);
   let esquinasActuales = MAC.esquinas;
   const seccionArq = $('#arquitectura');
   const mac = $('#mac');
