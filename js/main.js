@@ -168,7 +168,7 @@
   const GIRO = window.AXIA_MAC_GIRO;
   const MAC = { ancho: GIRO.ancho, alto: GIRO.alto, esquinas: GIRO.esquinas[0] };
   const ULTIMO_GIRO = GIRO.esquinas.length - 1;
-  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611280120`);
+  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611280124`);
   let esquinasActuales = MAC.esquinas;
   const seccionArq = $('#arquitectura');
   const mac = $('#mac');
@@ -545,6 +545,9 @@
   });
 
   /* ---------- 7. Formulario de contacto ---------- */
+  // GitHub Pages no ejecuta PHP (contacto.php devolvía 405): los contactos se envían con FormSubmit y llegan por
+  // correo a contacto@axia.company, que ImprovMX reenvía al Gmail de Axia (28/11). Si falla, se ofrece WhatsApp.
+  const ENVIO = 'https://formsubmit.co/ajax/contacto@axia.company';
   const form = $('#formulario');
   const aviso = $('.formulario__estado', form);
   const botonEnviar = $('button[type="submit"]', form);
@@ -564,11 +567,20 @@
     botonEnviar.disabled = true;
     avisar('Enviando…');
     try {
-      const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
-      const datos = await r.json().catch(() => ({}));
-      if (!r.ok || !datos.ok) throw new Error(datos.mensaje || 'error');
+      const d = Object.fromEntries(new FormData(form));
+      if (d.web) { form.reset(); avisar('¡Gracias! Te respondemos en menos de 24 h.', 'ok'); return; }   // trampa para bots
+      const r = await fetch(ENVIO, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          Nombre: d.nombre, Email: d.email, 'Teléfono': d.telefono || '—', Negocio: d.negocio, Mensaje: d.mensaje || '—',
+          _subject: `Nuevo contacto web: ${d.nombre} (${d.negocio})`, _replyto: d.email, _template: 'table', _captcha: 'false',
+        }),
+      });
+      const res = await r.json().catch(() => ({}));
+      if (!r.ok || String(res.success) !== 'true') throw new Error(res.message || 'error');
       form.reset();
-      avisar(datos.mensaje || '¡Gracias! Te respondemos en menos de 24 h.', 'ok');
+      avisar('¡Gracias! Te respondemos en menos de 24 h.', 'ok');
     } catch {
       avisar(`No se ha podido enviar desde aquí. <a href="${WHATSAPP}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te respondemos.`, 'mal');
     } finally {
