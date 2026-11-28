@@ -168,7 +168,7 @@
   const GIRO = window.AXIA_MAC_GIRO;
   const MAC = { ancho: GIRO.ancho, alto: GIRO.alto, esquinas: GIRO.esquinas[0] };
   const ULTIMO_GIRO = GIRO.esquinas.length - 1;
-  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611280124`);
+  const rutaGiro = (i) => (window.AXIA_GIRO_IMGS ? window.AXIA_GIRO_IMGS[i] : `img/giro-${String(i).padStart(3, '0')}.webp?v=202611280127`);
   let esquinasActuales = MAC.esquinas;
   const seccionArq = $('#arquitectura');
   const mac = $('#mac');
@@ -545,9 +545,11 @@
   });
 
   /* ---------- 7. Formulario de contacto ---------- */
-  // GitHub Pages no ejecuta PHP (contacto.php devolvía 405): los contactos se envían con FormSubmit y llegan por
-  // correo a contacto@axia.company, que ImprovMX reenvía al Gmail de Axia (28/11). Si falla, se ofrece WhatsApp.
-  const ENVIO = 'https://formsubmit.co/ajax/contacto@axia.company';
+  // GitHub Pages no ejecuta PHP (contacto.php devolvía 405). 28/11:
+  // - Con clave de Web3Forms, el contacto llega por correo a contacto@axia.company (ImprovMX → Gmail de Axia).
+  // - Sin clave, o si el envío falla, se abre WhatsApp con el mensaje ya escrito: el cliente solo le da a enviar.
+  //   (FormSubmit se descartó: su certificado no era válido y el navegador bloqueaba el envío.)
+  const CLAVE_WEB3FORMS = '';   // la clave que Web3Forms manda por correo a contacto@axia.company
   const form = $('#formulario');
   const aviso = $('.formulario__estado', form);
   const botonEnviar = $('button[type="submit"]', form);
@@ -564,25 +566,37 @@
     });
     if (!valido) { avisar('Revisa los campos marcados.', 'mal'); return; }
 
+    const d = Object.fromEntries(new FormData(form));
+    if (d.web) { form.reset(); avisar('¡Gracias! Te respondemos en menos de 24 h.', 'ok'); return; }   // trampa para bots
+    const msg = d.mensaje.trim(), tel = d.telefono.trim();
+    const texto = `Hola Pau, soy ${d.nombre.trim()} (${d.negocio}). ${msg ? msg.replace(/[.!?…]?$/, (p) => p || '.') : 'Quiero hablar de mi negocio.'}`
+      + ` Mi email: ${d.email.trim()}${tel ? ' · Mi teléfono: ' + tel : ''}`;
+    const porWhatsApp = 'https://wa.me/34684483549?text=' + encodeURIComponent(texto);
+    const enlaceWhatsApp = `<a href="${porWhatsApp}" target="_blank" rel="noopener">Abrir WhatsApp con tu mensaje</a>`;
+
+    if (!CLAVE_WEB3FORMS) {
+      // Se abre ya, dentro del clic (si se abre más tarde, el navegador lo bloquea)
+      window.open(porWhatsApp, '_blank', 'noopener');
+      avisar(`Te hemos abierto WhatsApp con tu mensaje: solo tienes que darle a enviar. ¿No se ha abierto? ${enlaceWhatsApp}.`, 'ok');
+      return;
+    }
     botonEnviar.disabled = true;
     avisar('Enviando…');
     try {
-      const d = Object.fromEntries(new FormData(form));
-      if (d.web) { form.reset(); avisar('¡Gracias! Te respondemos en menos de 24 h.', 'ok'); return; }   // trampa para bots
-      const r = await fetch(ENVIO, {
+      const r = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          Nombre: d.nombre, Email: d.email, 'Teléfono': d.telefono || '—', Negocio: d.negocio, Mensaje: d.mensaje || '—',
-          _subject: `Nuevo contacto web: ${d.nombre} (${d.negocio})`, _replyto: d.email, _template: 'table', _captcha: 'false',
+          access_key: CLAVE_WEB3FORMS, subject: `Nuevo contacto web: ${d.nombre} (${d.negocio})`, from_name: 'Web de Axia', replyto: d.email,
+          Nombre: d.nombre, Email: d.email, 'Teléfono': d.telefono || '—', Negocio: d.negocio, Mensaje: d.mensaje || '—', botcheck: '',
         }),
       });
       const res = await r.json().catch(() => ({}));
-      if (!r.ok || String(res.success) !== 'true') throw new Error(res.message || 'error');
+      if (!r.ok || res.success !== true) throw new Error(res.message || 'error');
       form.reset();
       avisar('¡Gracias! Te respondemos en menos de 24 h.', 'ok');
     } catch {
-      avisar(`No se ha podido enviar desde aquí. <a href="${WHATSAPP}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> y te respondemos.`, 'mal');
+      avisar(`No se ha podido enviar por correo. Para que no se pierda: ${enlaceWhatsApp}.`, 'mal');
     } finally {
       botonEnviar.disabled = false;
     }
